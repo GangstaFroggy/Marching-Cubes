@@ -1,0 +1,68 @@
+[gd_scene load_steps=14 format=3 uid="uid://c12udu45h1yp2"]
+
+[ext_resource type="Script" path="res://Camera3D.gd" id="1_b148m"]
+[ext_resource type="Script" path="res://MarchingCubes.gd" id="1_lylyd"]
+[ext_resource type="Script" path="res://Terrain.gd" id="3_2ia7q"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_fqa63"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_7fjip"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_rlqo6"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_nfixm"]
+fractal_type = 0
+fractal_octaves = 2
+
+[sub_resource type="Resource" id="Resource_yqfjk"]
+script = ExtResource("3_2ia7q")
+continent_noise = SubResource("FastNoiseLite_rlqo6")
+cavern_noise = SubResource("FastNoiseLite_7fjip")
+squish_noise = SubResource("FastNoiseLite_nfixm")
+continent_noise_limit = 0.35
+continentalness = 40.0
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_eb0qu"]
+
+[sub_resource type="Sky" id="Sky_5qyi6"]
+sky_material = SubResource("ProceduralSkyMaterial_eb0qu")
+
+[sub_resource type="Environment" id="Environment_ddjkg"]
+background_mode = 2
+sky = SubResource("Sky_5qyi6")
+ambient_light_source = 1
+
+[sub_resource type="PrismMesh" id="PrismMesh_ijuw0"]
+left_to_right = 1.0
+
+[sub_resource type="PrismMesh" id="PrismMesh_m1ow5"]
+left_to_right = 0.0
+
+[node name="Main" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+script = ExtResource("1_b148m")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." node_paths=PackedStringArray("player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("ArrayMesh_fqa63")
+script = ExtResource("1_lylyd")
+terrain = SubResource("Resource_yqfjk")
+player = NodePath("../Camera3D")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ddjkg")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.559193, 0.829038, 0, -0.829038, 0.559193, 0, 0, 0)
+shadow_normal_bias = 5.0
+shadow_reverse_cull_face = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("PrismMesh_ijuw0")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+visible = false
+mesh = SubResource("PrismMesh_m1ow5")
